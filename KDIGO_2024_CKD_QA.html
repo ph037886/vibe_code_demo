@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KDIGO 2024 CKD 藥師繼續教育闖關</title>
+<style>
+  :root{
+    --bg:#eef2f3; --card:#ffffff; --ink:#17313a; --muted:#597078;
+    --primary:#285b66; --primary2:#1f4851; --line:#cdd9dc;
+    --ok:#356b4a; --okbg:#e9f3ed; --bad:#8a4b4b; --badbg:#f6ecec;
+    --accent:#a37b3c; --footer:#20383e;
+  }
+  *{box-sizing:border-box}
+  html{font-size:18px}
+  body{
+    margin:0; background:linear-gradient(180deg,#e8eef0 0,#f5f7f7 48%,#eef2f3 100%);
+    color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",
+    "PingFang TC","Microsoft JhengHei",Arial,sans-serif; line-height:1.65;
+    padding-bottom:72px; min-height:100vh;
+  }
+  .wrap{width:min(980px,calc(100% - 28px)); margin:0 auto; padding:24px 0 36px}
+  .top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:18px;
+  }
+  h1{font-size:clamp(1.55rem,4vw,2.2rem); line-height:1.25; margin:0 0 6px}
+  .sub{color:var(--muted); margin:0}
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:18px;
+    box-shadow:0 8px 24px rgba(32,56,62,.08); padding:22px;
+  }
+  .status{
+    display:grid; grid-template-columns:1fr auto auto; gap:12px; align-items:center; margin-bottom:16px;
+  }
+  .progress{height:12px; background:#dfe7e9; border-radius:999px; overflow:hidden}
+  .progress>span{display:block; height:100%; width:0; background:var(--primary); transition:width .25s ease}
+  .badge{
+    background:#edf2f3; border:1px solid var(--line); border-radius:999px; padding:7px 12px;
+    font-weight:700; white-space:nowrap;
+  }
+  .lives{letter-spacing:.08em; font-size:1.2rem}
+  .qno{font-weight:800; color:var(--primary); margin-bottom:6px}
+  .question{font-size:clamp(1.15rem,3vw,1.42rem); font-weight:800; margin:0 0 18px}
+  .options{display:grid; gap:12px}
+  button{
+    font:inherit; border:0; cursor:pointer; transition:transform .06s ease,background .15s ease,border-color .15s ease;
+  }
+  button:active{transform:translateY(1px)}
+  .opt{
+    width:100%; text-align:left; min-height:58px; padding:14px 16px; border-radius:14px;
+    border:2px solid #c9d5d8; background:#f9fbfb; color:var(--ink); font-weight:700;
+  }
+  .opt:hover,.opt:focus-visible{border-color:var(--primary); outline:none; background:#f0f6f7}
+  .opt[disabled]{cursor:default; opacity:1}
+  .opt.correct{border-color:var(--ok); background:var(--okbg)}
+  .opt.wrong{border-color:var(--bad); background:var(--badbg)}
+  .feedback{margin-top:18px; border-radius:14px; padding:16px; display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--okbg); border:1px solid #b7d1c0}
+  .feedback.bad{background:var(--badbg); border:1px solid #dfc3c3}
+  .feedback h2{font-size:1.1rem; margin:0 0 8px}
+  .source{margin-top:10px; color:#394f56; font-weight:700}
+  .next{
+    display:none; margin-top:16px; width:100%; min-height:58px; border-radius:14px;
+    background:var(--primary); color:white; font-weight:800; font-size:1.08rem;
+  }
+  .next:hover,.restart:hover{background:var(--primary2)}
+  .next.show{display:block}
+  .result{display:none}
+  .result.show{display:block}
+  .score{font-size:clamp(2rem,7vw,3.2rem); font-weight:900; color:var(--primary); margin:8px 0}
+  .review{background:#f5f8f8; border:1px solid var(--line); padding:14px 16px; border-radius:14px; margin-top:14px}
+  .review ul{margin:.5rem 0 0; padding-left:1.25rem}
+  .restart{
+    margin-top:18px; width:100%; min-height:58px; border-radius:14px; background:var(--primary); color:#fff; font-weight:800;
+  }
+  .footer{
+    position:fixed; left:0; right:0; bottom:0; z-index:10; background:var(--footer); color:#fff;
+    text-align:center; padding:11px 14px calc(11px + env(safe-area-inset-bottom)); font-size:.88rem;
+    box-shadow:0 -3px 12px rgba(0,0,0,.12);
+  }
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media(max-width:620px){
+    html{font-size:17px}
+    .wrap{width:min(100% - 18px,980px); padding-top:14px}
+    .panel{padding:16px; border-radius:15px}
+    .top{display:block}
+    .status{grid-template-columns:1fr auto; gap:9px}
+    .status .progress{grid-column:1/-1; grid-row:2}
+    .opt{min-height:62px;padding:14px}
+    body{padding-bottom:88px}
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top">
+    <div>
+      <h1>KDIGO 2024 CKD 藥師繼續教育闖關</h1>
+      <p class="sub">答對前進，答錯扣 1 條命。共 3 條命。</p>
+    </div>
+  </div>
+
+  <section id="game" class="panel" aria-live="polite">
+    <div class="status">
+      <div class="progress" aria-label="闖關進度"><span id="bar"></span></div>
+      <div class="badge" id="counter">第 1 / 18 題</div>
+      <div class="badge lives" id="lives" aria-label="剩餘生命">♥ ♥ ♥</div>
+    </div>
+    <div class="qno" id="qno">第 1 關</div>
+    <p class="question" id="question"></p>
+    <div class="options" id="options"></div>
+    <div id="feedback" class="feedback">
+      <h2 id="feedbackTitle"></h2>
+      <div id="explanation"></div>
+      <div class="source" id="source"></div>
+    </div>
+    <button id="next" class="next">進入下一關</button>
+  </section>
+
+  <section id="result" class="panel result" aria-live="polite">
+    <h1>闖關結束</h1>
+    <div class="score" id="score"></div>
+    <div id="wrongSummary"></div>
+    <div class="review">
+      <strong>建議回去複習的章節</strong>
+      <ul id="chapters"></ul>
+    </div>
+    <button class="restart" id="restart">重新挑戰</button>
+  </section>
+</main>
+
+<footer class="footer">本遊戲僅供教育使用，臨床決策請依最新指引與個別評估。</footer>
+
+<script>
+"use strict";
+
+const questions = [
+{
+q:"對已確診 CKD 的成人，KDIGO 2024 對 albuminuria 與 GFR 的一般監測頻率建議為何？",
+o:["每 3 個月至少一次","每 6 個月至少一次","至少每年一次","只有症狀惡化時才需檢測"],
+a:2,
+e:"KDIGO 2024 Practice Point 2.1.1 指出，對 CKD 患者應至少每年評估一次 albuminuria（兒童可為 albuminuria/proteinuria）與 GFR。若 CKD 進展風險較高，而且檢測結果會影響治療決策，則可更頻繁評估。",
+s:"Chapter 2，Practice Point 2.1.1，p. S155"
+},
+{
+q:"CKD 患者後續檢測時，eGFR 變化超過多少，已超出預期變異並需要進一步評估？",
+o:[">10%",">15%",">20%",">30%"],
+a:2,
+e:"Practice Point 2.1.3 指出，CKD 患者在後續檢測中，eGFR 變化 >20% 已超出預期變異，應進一步評估原因。",
+s:"Chapter 2，Practice Point 2.1.3，p. S155"
+},
+{
+q:"CKD 患者開始會影響腎臟血流動力學的治療後，後續 GFR 下降超過多少，已超出預期變異並需要評估？",
+o:[">15%",">20%",">30%",">40%"],
+a:2,
+e:"Practice Point 2.1.4 指出，CKD 患者開始 hemodynamically active therapies 後，若後續 GFR 降低 >30%，已超出預期變異，應進一步評估。",
+s:"Chapter 2，Practice Point 2.1.4，p. S155"
+},
+{
+q:"對 CKD 患者監測 albuminuria 時，哪一種 ACR 變化已超出實驗室變異並需要評估？",
+o:["增加 10%","增加 20%","增加 50%","ACR 加倍"],
+a:3,
+e:"Practice Point 2.1.5 指出，CKD 患者後續檢測若 ACR 加倍（doubling of the ACR），已超出實驗室變異，應進一步評估。",
+s:"Chapter 2，Practice Point 2.1.5，p. S155"
+},
+{
+q:"對 CKD G3–G5 患者，KDIGO 2024 建議如何估計腎衰竭的絕對風險？",
+o:["只依年齡判斷","只依 eGFR 分期判斷","使用經外部驗證的風險方程式","只依尿液 ACR 判斷"],
+a:2,
+e:"Recommendation 2.2.1 建議，對 CKD G3–G5 患者使用經外部驗證的風險方程式，以估計腎衰竭的絕對風險。此建議為 1A。",
+s:"Chapter 2，Recommendation 2.2.1（1A），p. S198"
+},
+{
+q:"依 KDIGO 2024，哪一個 5 年腎衰竭風險範圍可作為考量轉介腎臟科的依據之一？",
+o:["1%–2%","3%–5%","6%–8%","10%–15%"],
+a:1,
+e:"Practice Point 2.2.1 指出，5 年腎衰竭風險 3%–5% 可用來判斷是否需要腎臟科轉介，但仍應合併 eGFR、尿液 ACR 與其他臨床考量。",
+s:"Chapter 2，Practice Point 2.2.1，p. S155"
+},
+{
+q:"一位 CKD 患者的 2 年腎衰竭風險估計為 12%。依 KDIGO 2024，最適合用此風險資訊協助決定下列哪一事項？",
+o:["多專業照護介入時機","立刻安排腎臟移植","停止所有降壓藥","不再追蹤腎功能"],
+a:0,
+e:"Practice Point 2.2.2 指出，2 年腎衰竭風險 >10% 可用來決定多專業照護（multidisciplinary care）的時機，並應同時考量 eGFR 與其他臨床因素。",
+s:"Chapter 2，Practice Point 2.2.2，p. S201"
+},
+{
+q:"依 KDIGO 2024，2 年腎衰竭風險 >40% 可用來協助決定下列哪一項？",
+o:["停止所有 CKD 藥物","腎臟替代治療方式教育、血管通路準備或移植轉介時機","只需要增加飲水量","改為每 5 年追蹤一次"],
+a:1,
+e:"Practice Point 2.2.3 指出，2 年腎衰竭風險 >40% 可用來決定腎臟替代治療方式教育、KRT 準備時機，包括血管通路規劃或轉介腎臟移植；仍需合併 eGFR 與其他臨床考量。",
+s:"Chapter 2，Practice Point 2.2.3，p. S201"
+},
+{
+q:"對成人 CKD G3–G5，KDIGO 2024 建議維持的蛋白質攝取量為何？",
+o:["0.3 g/kg/day","0.5 g/kg/day","0.8 g/kg/day","1.5 g/kg/day"],
+a:2,
+e:"Recommendation 3.3.1.1 建議，成人 CKD G3–G5 維持蛋白質攝取量 0.8 g/kg body weight/day。此建議為 2C。",
+s:"Chapter 3，Recommendation 3.3.1.1（2C），p. S157"
+},
+{
+q:"KDIGO 2024 對 CKD 患者的鈉攝取建議為何？",
+o:["<1 g sodium/day","<2 g sodium/day","<4 g sodium/day","不需限制鈉攝取"],
+a:1,
+e:"Recommendation 3.3.2.1 建議 CKD 患者鈉攝取 <2 g sodium/day，等同 <90 mmol sodium/day 或 <5 g sodium chloride/day。此建議為 2C。",
+s:"Chapter 3，Recommendation 3.3.2.1（2C），p. S157"
+},
+{
+q:"成人有高血壓且合併 CKD，若可耐受並使用標準化診間血壓測量，KDIGO 2024 建議的收縮壓目標為何？",
+o:["<100 mmHg","<110 mmHg","<120 mmHg","<140 mmHg"],
+a:2,
+e:"Recommendation 3.4.1 建議，成人高血壓合併 CKD，在可耐受的情況下，使用標準化診間血壓測量時，收縮壓目標為 <120 mmHg。此建議為 2B。",
+s:"Chapter 3，Recommendation 3.4.1（2B），p. S157"
+},
+{
+q:"一位沒有糖尿病的 CKD G3b、A3 患者，依 KDIGO 2024，對 RASi 的建議為何？",
+o:["不建議使用 ACEi 或 ARB","建議開始 ACEi 或 ARB","必須合併 ACEi 與 ARB","只可使用 direct renin inhibitor"],
+a:1,
+e:"Recommendation 3.6.1 建議，沒有糖尿病、CKD G1–G4 且 A3 的患者開始 RASi（ACEi 或 ARB）。此建議為 1B。",
+s:"Chapter 3，Recommendation 3.6.1（1B），p. S158"
+},
+{
+q:"一位有糖尿病的 CKD G3a、A2 患者，依 KDIGO 2024，對 RASi 的建議為何？",
+o:["建議開始 ACEi 或 ARB","不建議使用 RASi","必須同時使用 ACEi 與 ARB","只在 eGFR <15 時才使用"],
+a:0,
+e:"Recommendation 3.6.3 建議，糖尿病合併 CKD G1–G4 且 A2 或 A3 的患者開始 RASi（ACEi 或 ARB）。此建議為 1B。",
+s:"Chapter 3，Recommendation 3.6.3（1B），p. S158"
+},
+{
+q:"下列哪一種 RAS 阻斷策略是 KDIGO 2024 明確建議避免的？",
+o:["ACEi 單方","ARB 單方","ACEi、ARB 與 direct renin inhibitor 的任何合併","ACEi 或 ARB 使用可耐受的最高核准劑量"],
+a:2,
+e:"Recommendation 3.6.4 建議避免 ACEi、ARB 與 direct renin inhibitor（DRI）的任何合併治療，不論患者是否有糖尿病。此建議為 1B。",
+s:"Chapter 3，Recommendation 3.6.4（1B），p. S158"
+},
+{
+q:"開始 RASi 或增加 RASi 劑量後，KDIGO 2024 建議在多久內檢查血壓、serum creatinine 與 serum potassium？",
+o:["24 小時內","2–4 週內","3 個月後","6 個月後"],
+a:1,
+e:"Practice Point 3.6.2 指出，開始 RASi 或增加劑量後，應依目前 GFR 與 serum potassium，在 2–4 週內檢查血壓、serum creatinine 與 serum potassium。",
+s:"Chapter 3，Practice Point 3.6.2，p. S158"
+},
+{
+q:"一位 CKD 患者開始 ACEi 後 4 週內 serum creatinine 上升 20%，沒有 symptomatic hypotension，且 potassium 可控制。依 KDIGO 2024，最適合的處置為何？",
+o:["立即永久停用 ACEi","一般可繼續 ACEi","立刻合併 ARB","改成 ACEi、ARB、DRI 三合一"],
+a:1,
+e:"Practice Point 3.6.4 指出，除非開始 ACEi/ARB 或增加劑量後 4 週內 serum creatinine 上升 >30%，否則應繼續 ACEi 或 ARB。Practice Point 3.6.3 也指出，RASi 相關 hyperkalemia 常可先以降低 potassium 的措施處理，而不是直接減量或停藥。本題 serum creatinine 上升 20%，未超過 >30% 的門檻。",
+s:"Chapter 3，Practice Point 3.6.3–3.6.4，p. S158"
+},
+{
+q:"一位成人 CKD 患者，eGFR 25 mL/min/1.73 m²，urine ACR 250 mg/g，沒有糖尿病。依 KDIGO 2024，對 SGLT2i 的建議為何？",
+o:["因沒有糖尿病，不可使用 SGLT2i","建議使用 SGLT2i","只有 eGFR ≥60 才可使用","只有 ACR <30 mg/g 才建議使用"],
+a:1,
+e:"Recommendation 3.7.2 建議成人 CKD 患者在 eGFR ≥20 mL/min/1.73 m² 且 urine ACR ≥200 mg/g（≥20 mg/mmol）時使用 SGLT2i，或合併心衰竭時不論 albuminuria 程度皆建議使用。此建議為 1A。本題 eGFR 25 且 ACR 250 mg/g，符合條件，即使沒有糖尿病仍適用。",
+s:"Chapter 3，Recommendation 3.7.2（1A），p. S159"
+},
+{
+q:"一位正在使用 SGLT2i 的 CKD 患者即將接受手術，且預期會有較長時間禁食。依 KDIGO 2024，何者最適當？",
+o:["合理暫停 SGLT2i","一定要加倍 SGLT2i 劑量","完全不需考量禁食與手術","改成 ACEi 與 ARB 併用"],
+a:0,
+e:"Practice Point 3.7.2 指出，在 prolonged fasting、surgery 或 critical medical illness 期間，因 ketosis 風險增加，合理的做法是暫停 SGLT2i。Practice Point 3.7.3 另指出，SGLT2i 開始後可逆性的 eGFR 下降通常不是停藥指徵。",
+s:"Chapter 3，Practice Point 3.7.2–3.7.3，p. S159"
+}
+];
+
+let index=0, lives=3, score=0, wrong=[], answered=false;
+
+const $ = id => document.getElementById(id);
+const game=$("game"), result=$("result"), options=$("options"), next=$("next");
+
+function render(){
+  answered=false;
+  const item=questions[index];
+  $("counter").textContent=`第 ${index+1} / ${questions.length} 題`;
+  $("qno").textContent=`第 ${index+1} 關`;
+  $("question").textContent=item.q;
+  $("bar").style.width=`${(index/questions.length)*100}%`;
+  $("lives").textContent=("♥ ".repeat(lives)+"♡ ".repeat(3-lives)).trim();
+  options.innerHTML="";
+  item.o.forEach((txt,i)=>{
+    const b=document.createElement("button");
+    b.className="opt";
+    b.type="button";
+    b.textContent=`${String.fromCharCode(65+i)}. ${txt}`;
+    b.addEventListener("click",()=>answer(i));
+    options.appendChild(b);
+  });
+  $("feedback").className="feedback";
+  next.className="next";
+  next.textContent=index===questions.length-1 ? "查看結算" : "進入下一關";
+}
+
+function answer(choice){
+  if(answered) return;
+  answered=true;
+  const item=questions[index];
+  const buttons=[...options.querySelectorAll(".opt")];
+  buttons.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===item.a) b.classList.add("correct");
+  });
+
+  if(choice===item.a){
+    score++;
+    $("feedbackTitle").textContent="答對了";
+    $("feedback").className="feedback show ok";
+  }else{
+    lives--;
+    wrong.push(index+1);
+    buttons[choice].classList.add("wrong");
+    $("feedbackTitle").textContent="答錯了，扣 1 條命";
+    $("feedback").className="feedback show bad";
+  }
+  $("lives").textContent=("♥ ".repeat(lives)+"♡ ".repeat(3-lives)).trim();
+  $("explanation").textContent=item.e;
+  $("source").textContent="出處："+item.s;
+  next.className="next show";
+  if(lives<=0) next.textContent="查看結算";
+}
+
+function advance(){
+  if(!answered) return;
+  if(lives<=0 || index===questions.length-1){
+    finish();
+  }else{
+    index++;
+    render();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+}
+
+function finish(){
+  game.style.display="none";
+  result.classList.add("show");
+  $("bar").style.width="100%";
+  $("score").textContent=`得分 ${score} / ${questions.length}`;
+  $("wrongSummary").innerHTML = wrong.length
+    ? `<p><strong>答錯題號：</strong>${wrong.join("、")}</p>`
+    : `<p><strong>答錯題號：</strong>無，全部答對。</p>`;
+
+  const chapterSet=[];
+  wrong.forEach(n=>{
+    const src=questions[n-1].s;
+    const ch=(src.match(/Chapter\s+\d+/)||[])[0] || src;
+    if(!chapterSet.includes(ch)) chapterSet.push(ch);
+  });
+  const ul=$("chapters");
+  ul.innerHTML="";
+  const list=chapterSet.length?chapterSet:["本次沒有答錯題目，可依需要複習全部章節。"];
+  list.forEach(x=>{
+    const li=document.createElement("li"); li.textContent=x; ul.appendChild(li);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function restart(){
+  index=0; lives=3; score=0; wrong=[]; answered=false;
+  result.classList.remove("show");
+  game.style.display="";
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+next.addEventListener("click",advance);
+$("restart").addEventListener("click",restart);
+render();
+</script>
+</body>
+</html>
